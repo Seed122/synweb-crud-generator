@@ -21,7 +21,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="28" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="28"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
@@ -55,42 +54,25 @@
         <Grid Name="ChildGridMiddle" Grid.Row="1" Width="Auto" Height="Auto">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="126"></ColumnDefinition>
-                <ColumnDefinition Width="94"/>
-                <ColumnDefinition Width="9*"></ColumnDefinition>
-                <ColumnDefinition Width="62*"/>
+                <ColumnDefinition Width="220"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <views:TreeViewWithCheckBox Name="treeView1" Grid.Row="0" Grid.Column ="0" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" BorderThickness="0" Grid.ColumnSpan="2" ></views:TreeViewWithCheckBox>
-            <TextBox Name="txtOutPut" Grid.Row="0" Grid.Column="2"   Height="Auto" Width="Auto" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Text="{Binding SqlScript}" ScrollViewer.CanContentScroll="True" BorderThickness="1" Grid.ColumnSpan="2"   />
+            <views:TreeViewWithCheckBox Name="treeView1" Grid.Row="0" Grid.Column ="0" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" BorderThickness="0" ></views:TreeViewWithCheckBox>
+            <TextBox Name="txtOutPut" Grid.Row="0" Grid.Column="1"  Grid.RowSpan="2"
+                     Height="Auto" Width="Auto" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Text="{Binding SqlScript}" ScrollViewer.CanContentScroll="True" BorderThickness="0" Grid.ColumnSpan="2"   />
 
-            <GridSplitter Grid.Column="2" 
+            <GridSplitter Grid.Column="1" Grid.RowSpan="2"
               HorizontalAlignment="Left" 
               VerticalAlignment="Stretch"
               Background="LightBlue" 
               ShowsPreview="true"
               Width="1"/>
-        </Grid>
-
-        <Grid Name="ChildGridBottom" Grid.Column="0" Grid.Row="2"  ShowGridLines="True" >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="220"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="220"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Button Name="btnGenerate" IsEnabled="{Binding IsConnectedToServer}" Width="Auto" HorizontalAlignment="Stretch" Command="{Binding GenerateSPCommand}" Grid.Row="0"  Grid.Column="0" BorderThickness="1">
+            <Button Name="btnGenerate" IsEnabled="{Binding IsConnectedToServer}" HorizontalAlignment="Center" Command="{Binding GenerateSPCommand}" Grid.Row="1"  Grid.Column="0" BorderThickness="1">
                 <TextBlock> Generate SP</TextBlock>
-            </Button>
-            <Button Name="btnSettings" Command="{Binding SettingCommand}"  Grid.Row="0" Grid.Column="1" >
-                <TextBlock>Settings</TextBlock>
-            </Button>
-            <Button Name="btnCopytoClipBoard" IsEnabled="{Binding IsConnectedToServer}" Command="{Binding CopyCommand}"  Grid.Row="0"  Grid.Column="2">
-                <TextBlock> Copy Generated SP</TextBlock>
             </Button>
         </Grid>
     </Grid>
