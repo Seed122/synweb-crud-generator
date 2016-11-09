@@ -20,7 +20,7 @@ namespace SPGenerator.DAL
         {
             using (var connection = new SqlConnection(ConnectionString))
             {
-                string sql = "SELECT name FROM sys.Tables";
+                string sql = "SELECT name, schema_id FROM sys.Tables";
                 sqlTableList = new List<DBTableInfo>();
 
                 DataTable dt = ExecuteDataTable(sql, connection);
@@ -28,16 +28,16 @@ namespace SPGenerator.DAL
                 primaryColumns = LoadPrimaryColumns(connection);
                 foreach (DataRow dr in dt.Rows)
                 {
-                    var tbinfo = GetTableInformation(dr["name"].ToString(), connection);
+                    var tbinfo = GetTableInformation(dr["name"].ToString(), Convert.ToInt32(dr["schema_id"]), connection);
                     sqlTableList.Add(tbinfo);
                 }
             }
 
             return sqlTableList;
         }
-        private DBTableInfo GetTableInformation(string tableName, SqlConnection connection)
+        private DBTableInfo GetTableInformation(string tableName, int schemaId, SqlConnection connection)
         {
-            string sql = "Select * from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='" + tableName + "'";
+            string sql = $"Select * from INFORMATION_SCHEMA.COLUMNS c JOIN sys.schemas s ON c.TABLE_SCHEMA = s.name where TABLE_NAME='{tableName}' AND s.schema_id={schemaId}";
             var dt = ExecuteDataTable(sql, connection);
             var sqlTableInfo = new DBTableInfo();
             List<DBTableColumnInfo> colList = new List<DBTableColumnInfo>();

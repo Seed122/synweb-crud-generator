@@ -19,12 +19,9 @@ namespace SPGenerator.UI.Models
         public List<DBTableInfo> GetDbInfo(string connectionString)
         {
             IDataBase dataBase =  GetDataBaseObject(connectionString);
-            return dataBase.GetDataBaseTables();
+            return dataBase.GetDataBaseTables().OrderBy(x => x.FullTableName).ToList();
         }
-        //internal void RefreshSettings()
-        //{
-        //    BaseSPGenerator.SetSettings(Comman.Settings.GetSettings());
-        //}
+
         public StoredProcedure GenerateSp(DBTableInfo tableInfo, string nodeName, List<DBTableColumnInfo> selectedFields, List<DBTableColumnInfo> whereConditionFields)
         {
             BaseSPGenerator spGenerator = SPFactory.GetSpGeneratorObject(nodeName);
