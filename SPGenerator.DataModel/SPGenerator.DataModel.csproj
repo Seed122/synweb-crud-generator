@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="DBTableColumnInfo.cs" />
     <Compile Include="DBTableInfo.cs" />
+    <Compile Include="IDataBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>

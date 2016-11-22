@@ -48,10 +48,6 @@
       <Project>{f13ec51f-1d23-482c-8b96-8c04b0b95a5f}</Project>
       <Name>SPGenerator.DataModel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SPGenerator.Interfaces\SPGenerator.Interface.csproj">
-      <Project>{3acf847c-e288-434f-aa83-67931a25c86b}</Project>
-      <Name>SPGenerator.Interface</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

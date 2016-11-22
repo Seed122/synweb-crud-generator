@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:views="clr-namespace:TreeViewControl.Views;assembly=TreeViewControl"
-        Title="SP Generator" Height="500" Width="950" FontSize="12"  WindowStartupLocation="CenterScreen">
+        Title="SynWeb CRUDGen" Height="500" Width="950" FontSize="12"  WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" TargetType="Button">
             <Setter Property="Control.FontWeight" Value="Bold" />

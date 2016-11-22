@@ -23,7 +23,7 @@ namespace SPGenerator.UI.ViewModels
         #region vairable
         TreeViewNode rootNode;
         MainWinModel model;
-        string conString = @"Server=.\sqlexpress;Database=TestDb;User ID=mahesh;Password=mypassword;";
+        string conString = @"data source=localhost;initial catalog=test;persist security info=True;user id=sa;password=pas$w0rd;multipleactiveresultsets=True";
         private ICollection<DBTableInfo> _dbInfo;
         //string defaultDisplayText = "Enter Connection String Here";
         #endregion

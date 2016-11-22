@@ -1,5 +1,4 @@
 ﻿using SPGenerator.DataModel;
-using SPGenerator.Interface;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace SPGenerator.DAL
 {
-   public  partial class SqlDataBase : IDataBase
+   public  partial class SqlDatabase : IDatabase
     {
-        public SqlDataBase(string connectionString)
+        public SqlDatabase(string connectionString)
         {
             ConnectionString = connectionString;
         }

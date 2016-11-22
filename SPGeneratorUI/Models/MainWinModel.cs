@@ -2,7 +2,6 @@
 using SPGenerator.Core;
 using SPGenerator.DAL;
 using SPGenerator.DataModel;
-using SPGenerator.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,8 +17,8 @@ namespace SPGenerator.UI.Models
     {
         public List<DBTableInfo> GetDbInfo(string connectionString)
         {
-            IDataBase dataBase =  GetDataBaseObject(connectionString);
-            return dataBase.GetDataBaseTables().OrderBy(x => x.FullTableName).ToList();
+            IDatabase database =  GetDataBaseObject(connectionString);
+            return database.GetDataBaseTables().OrderBy(x => x.FullTableName).ToList();
         }
 
         public StoredProcedure GenerateSp(DBTableInfo tableInfo, string nodeName, List<DBTableColumnInfo> selectedFields, List<DBTableColumnInfo> whereConditionFields)
@@ -29,9 +28,9 @@ namespace SPGenerator.UI.Models
             SaveProcedureToFile(procedure);
             return procedure;
         }
-        private IDataBase GetDataBaseObject(string connectionString)
+        private IDatabase GetDataBaseObject(string connectionString)
         {
-            return new SqlDataBase(connectionString);
+            return new SqlDatabase(connectionString);
         }
 
         private void SaveProcedureToFile(StoredProcedure procedure)

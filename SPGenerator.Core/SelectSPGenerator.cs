@@ -15,13 +15,23 @@ namespace SPGenerator.Core
 
         protected override string GenerateStatement(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedFields, List<DBTableColumnInfo> whereConditionFields)
         {
-            //List<string> fields = new List<string>();
-            //foreach (DBTableColumnInfo colInf in selectedFields.Where(x => !x.Exclude))
-            //{
-            //    fields.Add(Wrap(colInf.ColumnName));
-            //}
-            //return "\tSELECT " + string.Join(", ", fields) + " FROM " + tableInfo.FullTableName;
-            return "\tSELECT * FROM " + tableInfo.FullTableName;
+            string selectFieldsStr;
+            if (selectedFields.Count == tableInfo.Columns.Count)
+            {
+                selectFieldsStr = "*";
+            }
+            else
+            {
+                List<string> fields = new List<string>();
+                foreach (DBTableColumnInfo colInf in selectedFields.Where(x => !x.Exclude))
+                {
+                    fields.Add(Wrap(colInf.ColumnName));
+                }
+                selectFieldsStr = string.Join(", ", fields);
+            }
+
+            return
+                $"\tSELECT {selectFieldsStr} FROM {tableInfo.FullTableName}";
         }
 
         protected override string GenerateInputParameters(List<DBTableColumnInfo> fields)
