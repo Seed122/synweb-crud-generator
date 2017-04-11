@@ -1,5 +1,4 @@
-﻿using SPGenerator.UI.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,14 +15,13 @@ using System.Windows.Shapes;
 namespace SPGenerator.UI.Views
 {
     /// <summary>
-    /// Interaction logic for Settings.xaml
+    /// Interaction logic for InitConnectionDialogView.xaml
     /// </summary>
-    public partial class Settings : Window
+    public partial class InitConnectionDialogView : Window
     {
-        public Settings()
+        public InitConnectionDialogView()
         {
             InitializeComponent();
-            this.DataContext = new SettingsVM();
         }
     }
 }

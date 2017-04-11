@@ -1,106 +1,89 @@
-﻿using SPGenerator.UI.Commands;
-using SPGenerator.UI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
+using Caliburn.Micro;
+using SPGenerator.DataModel;
+using SPGenerator.UI.Commands;
+using SPGenerator.UI.Models;
 
 namespace SPGenerator.UI.ViewModels
 {
-    class SettingsVM : ViewModelBase
+    class SettingsDialogViewModel : ViewAware
     {
-        SettingsModel model;
-        public SettingsVM()
+        readonly SettingsModel _model;
+        public SettingsDialogViewModel()
         {
-            model = new SettingsModel();
+            _model = new SettingsModel();
             LoadSettings();
         }
 
         #region Properties
-        string prefixWhereParameter;
+
         public string PrefixWhereParameter
         {
-            get
-            {
-                return prefixWhereParameter;
-            }
+            get { return _prefixWhereParameter; }
             set
             {
-                prefixWhereParameter = value;
-                NotifyPropertyChanged("prefixWhereParameter");
+                if (value == _prefixWhereParameter) return;
+                _prefixWhereParameter = value;
+                NotifyOfPropertyChange();
             }
         }
 
-        string prefixInputParameter;
         public string PrefixInputParameter
         {
-            get
-            {
-                return prefixInputParameter;
-            }
+            get { return _prefixInputParameter; }
             set
             {
-                prefixInputParameter = value;
-                NotifyPropertyChanged("prefixInputParameter");
+                if (value == _prefixInputParameter) return;
+                _prefixInputParameter = value;
+                NotifyOfPropertyChange();
             }
         }
+        
 
-        string postfixInsertSp;
         public string PostfixInsertSp
         {
-            get
-            {
-                return postfixInsertSp;
-            }
+            get { return _postfixInsertSp1; }
             set
             {
-                postfixInsertSp = value;
-                NotifyPropertyChanged("postfixInsertSp");
+                if (value == _postfixInsertSp1) return;
+                _postfixInsertSp1 = value;
+                NotifyOfPropertyChange();
             }
         }
 
-        string postfixUpdateSp;
+
         public string PostfixUpdateSp
         {
-            get
-            {
-                return postfixUpdateSp;
-            }
+            get { return _postfixUpdateSp; }
             set
             {
-                postfixUpdateSp = value;
-                NotifyPropertyChanged("postfixUpdateSp");
+                if (value == _postfixUpdateSp) return;
+                _postfixUpdateSp = value;
+                NotifyOfPropertyChange();
             }
         }
 
-        string postfixDeleteSp;
+
         public string PostfixDeleteSp
         {
-            get
-            {
-                return postfixDeleteSp;
-            }
+            get { return _postfixDeleteSp; }
             set
             {
-                postfixDeleteSp = value;
-                NotifyPropertyChanged("postfixDeleteSp");
+                if (value == _postfixDeleteSp) return;
+                _postfixDeleteSp = value;
+                NotifyOfPropertyChange();
             }
         }
 
-        string errorHandling;
         public string ErrorHandling
         {
-            get
-            {
-                return errorHandling;
-            }
+            get { return _errorHandling; }
             set
             {
-                errorHandling = value;
-                NotifyPropertyChanged("ErrorHandling");
+                if (value == _errorHandling) return;
+                _errorHandling = value;
+                NotifyOfPropertyChange();
             }
         }
 
@@ -108,7 +91,7 @@ namespace SPGenerator.UI.ViewModels
         {
             get
             {
-                return new string[] { "Yes", "No" };
+                return new[] { "Yes", "No" };
                
             }
         }
@@ -122,17 +105,27 @@ namespace SPGenerator.UI.ViewModels
         {
             get
             {
-                if (saveCommand == null) saveCommand = new RelayCommand(param => this.Save(param));
+                if (saveCommand == null)
+                    saveCommand = new RelayCommand(Save);
                 return saveCommand;
             }
         }
 
         private RelayCommand cancelCommand;
+        private string _prefixWhereParameter;
+        private string _prefixInputParameter;
+        private string _postfixInsertSp;
+        private string _postfixInsertSp1;
+        private string _postfixUpdateSp;
+        private string _postfixDeleteSp;
+        private string _errorHandling;
+
         public ICommand CancelCommand
         {
             get
             {
-                if (cancelCommand == null) cancelCommand = new RelayCommand(param => this.Cancel(param));
+                if (cancelCommand == null)
+                    cancelCommand = new RelayCommand(Cancel);
                 return cancelCommand;
             }
         }
@@ -144,14 +137,14 @@ namespace SPGenerator.UI.ViewModels
 
         private void Save(object param)
         {
-            var settings = new SPGenerator.DataModel.Settings();
+            var settings = new Settings();
             settings.PrefixInputParameter = PrefixInputParameter;
             settings.PostfixInsertSp = PostfixInsertSp;
             settings.PostfixUpdateSp = PostfixUpdateSp;
             settings.PostfixDeleteSp = PostfixDeleteSp;
             settings.PrefixWhereParameter = PrefixWhereParameter;
             settings.errorHandling = ErrorHandling;
-            model.SaveSettings(settings);
+            _model.SaveSettings(settings);
             ((Window)param).Close();
         }
 
@@ -160,7 +153,7 @@ namespace SPGenerator.UI.ViewModels
 
         private void LoadSettings()
         {
-            var settings = model.GetSettings();
+            var settings = _model.GetSettings();
             PrefixInputParameter = settings.PrefixInputParameter;
             PostfixInsertSp = settings.PostfixInsertSp;
             PostfixUpdateSp = settings.PostfixUpdateSp;

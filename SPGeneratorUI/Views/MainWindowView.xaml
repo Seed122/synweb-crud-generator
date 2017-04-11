@@ -1,4 +1,4 @@
-﻿<Window x:Class="SPGenerator.UI.Views.MainWin"
+﻿<Window x:Class="SPGenerator.UI.Views.MainWindowView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -11,9 +11,7 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="Cursor" Value="Hand" />
-        </Style>
-        <Style TargetType="TextBlock">
-            <Setter Property="TextBlock.TextDecorations" Value="underline" />
+            
         </Style>
     </Window.Resources>
 
@@ -21,34 +19,33 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="28" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Grid Name="ChildGridTop" Grid.Column="0" Grid.Row="0" >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <Grid Grid.Row="2" Visibility="{Binding IsConnectionStringInitialized, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="110"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
+            <TextBlock  Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Run>Connection String:</Run>
+                <Run Text="{Binding SecureConnectionString, Mode=OneWay}"></Run>
+            </TextBlock>
+            <Button Grid.Column="1" Margin="10,0" Name="CopyConnectionString">Copy to Clipboard</Button>
+        </Grid>
 
-            <TextBox  Grid.Column="0" Grid.Row="0"   Height="Auto" Width="Auto"  Name="txtConnectionString" Text="{Binding ConnectionString, Mode=TwoWay}" HorizontalAlignment="Stretch" >
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="GotFocus">
-                        <i:InvokeCommandAction Command="{Binding GotFocusConnectionStringCommand}" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="LostFocus">
-                        <i:InvokeCommandAction Command="{Binding LostFocusConnectionStringCommand}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </TextBox>
+        <Grid Name="ChildGridTop" Grid.Column="0" Grid.Row="0" >
 
-            <Button Grid.Column="1" Grid.Row="0"  Command="{Binding ConnectServerCommand}" CommandParameter="{Binding ElementName=treeView1}" >
-                <TextBlock>Connect To Server</TextBlock>
-            </Button>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Grid.Column="1" Grid.Row="0"  Name="ReloadDatabase"  Margin="10,0">Reload</Button>
+            <!--<Button Grid.Column="1" Grid.Row="0"  Command="{Binding ConnectServerCommand}" CommandParameter="{Binding ElementName=treeView1}" >Connect To Server</Button>-->
+                <Button Grid.Column="1" Grid.Row="0"  Name="ConnectToServer">Connect To Server</Button>
+
+            </StackPanel>
         </Grid>
 
         <Grid Name="ChildGridMiddle" Grid.Row="1" Width="Auto" Height="Auto">
@@ -71,8 +68,8 @@
               Background="LightBlue" 
               ShowsPreview="true"
               Width="1"/>
-            <Button Name="btnGenerate" IsEnabled="{Binding IsConnectedToServer}" HorizontalAlignment="Center" Command="{Binding GenerateSPCommand}" Grid.Row="1"  Grid.Column="0" BorderThickness="1">
-                <TextBlock> Generate SP</TextBlock>
+            <Button IsEnabled="{Binding IsConnectedToServer}" HorizontalAlignment="Center" Name="GenerateSP" Grid.Row="1"  Grid.Column="0" BorderThickness="1">
+                Generate SP
             </Button>
         </Grid>
     </Grid>

@@ -1,10 +1,5 @@
-﻿using SPGenerator.UI.Comman;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
+using SPGenerator.Common;
 using SD = SPGenerator.DataModel;
 
 namespace SPGenerator.UI.Models
@@ -13,12 +8,17 @@ namespace SPGenerator.UI.Models
     {
         internal void SaveSettings(SD.Settings settings)
         {
-            Comman.Settings.SaveSettings(settings);
+            var filePath = Path.GetTempPath() + "\\" + Constants.settingTempFileName;
+            Serializer.Serialize(settings, filePath);
         }
 
         internal SPGenerator.DataModel.Settings GetSettings()
         {
-            return Comman.Settings.GetSettings();
+            var filePath = Path.GetTempPath() + "\\" + Constants.settingTempFileName;
+            var settings = Serializer.Deserialize(new DataModel.Settings(), filePath);
+            if (settings == null)
+                settings = new DataModel.Settings();
+            return settings;
         }
     }
 }

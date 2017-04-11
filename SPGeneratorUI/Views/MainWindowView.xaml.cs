@@ -17,14 +17,14 @@ using System.Windows.Shapes;
 namespace SPGenerator.UI.Views
 {
     /// <summary>
-    /// Interaction logic for MainWin.xaml
+    /// Interaction logic for MainWindowView.xaml
     /// </summary>
-    public partial class MainWin : Window
+    public partial class MainWindowView : Window
     {
-        public MainWin()
+        public MainWindowView()
         {
             InitializeComponent();
-            this.DataContext = new MainWinVM();
+            this.DataContext = new MainWindowViewModel();
         }
     }
 }

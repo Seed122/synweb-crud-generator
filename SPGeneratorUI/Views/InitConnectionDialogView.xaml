@@ -1,0 +1,40 @@
+﻿<Window x:Class="SPGenerator.UI.Views.InitConnectionDialogView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SPGenerator.UI.Views"
+        mc:Ignorable="d"
+        Title="InitConnectionDialogView" SizeToContent="Height" Width="400" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0">Server</Label>
+        <TextBox Grid.Row="0" Name="DataSource" Grid.Column="1"></TextBox>
+        <Label Grid.Row="1" Grid.Column="0">SQL Login</Label>
+        <TextBox Grid.Row="1" Name="Login" Grid.Column="1" ></TextBox>
+        <Label Grid.Row="2" Grid.Column="0">Password</Label>
+        <TextBox Grid.Row="2" Name="Password" Grid.Column="1" ></TextBox>
+        <Label Grid.Row="3" Grid.Column="0">Database</Label>
+        <TextBox Grid.Row="3" Name="Database" Grid.Column="1" ></TextBox>
+        <Grid Grid.Row="5" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="Connect">Connect</Button>
+            <Button Grid.Column="1" Name="Cancel">Cancel</Button>
+        </Grid>
+    </Grid>
+</Window>

@@ -7,96 +7,115 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Caliburn.Micro;
+using SPGenerator.UI.Views;
 using TreeViewControl.ViewModels;
 using TreeViewControl.Views;
 
 
 namespace SPGenerator.UI.ViewModels
 {
-    internal class MainWinVM : ViewModelBase
+    public class MainWindowViewModel : ViewAware
     {
 
         #region vairable
         TreeViewNode rootNode;
         MainWinModel model;
-        string conString = @"data source=localhost;initial catalog=test;persist security info=True;user id=sa;password=pas$w0rd;multipleactiveresultsets=True";
+        
         private ICollection<DBTableInfo> _dbInfo;
         //string defaultDisplayText = "Enter Connection String Here";
         #endregion
 
-        public MainWinVM()
+        public MainWindowViewModel()
         {
             model = new MainWinModel();
-            ConnectionString = conString;
+            ConnectionString = String.Empty;
         }
 
         #region Properties
-        string sqlScript;
+
         public string SqlScript
         {
-            get
-            {
-                return sqlScript;
-            }
+            get { return _sqlScript; }
             set
             {
-                sqlScript = value;
-                NotifyPropertyChanged("SqlScript");
+                if (value == _sqlScript) return;
+                _sqlScript = value;
+                NotifyOfPropertyChange();
             }
         }
 
-        string connectionString;
         public string ConnectionString
         {
-            get
-            {
-                return connectionString;
-            }
+            get { return _connectionString; }
             set
             {
-                connectionString = value;
-                NotifyPropertyChanged("ConnectionString");
+                if (value == _connectionString) return;
+                _connectionString = value;
+                NotifyOfPropertyChange();
+                NotifyOfPropertyChange(nameof(SecureConnectionString));
+                NotifyOfPropertyChange(nameof(IsConnectionStringInitialized));
             }
         }
 
-        bool isConnectedToServer;
+        public string SecureConnectionString
+        {
+            get { return Regex.Replace(ConnectionString, @"(?<=password=).+?(?=;)", "********"); }
+        }
+
+        public bool IsConnectionStringInitialized => !string.IsNullOrEmpty(ConnectionString);
+
+
         public bool IsConnectedToServer
         {
-            get
-            {
-                return isConnectedToServer;
-            }
+            get { return _isConnectedToServer; }
             set
             {
-                isConnectedToServer = value;
-                NotifyPropertyChanged("IsConnectedToServer");
+                if (value == _isConnectedToServer) return;
+                _isConnectedToServer = value;
+                NotifyOfPropertyChange();
             }
         }
 
         #endregion
 
         #region Commands
-        private RelayCommand connectServerCommand;
-        public ICommand ConnectServerCommand
+
+        public void CopyConnectionString()
         {
-            get
-            {
-                if (connectServerCommand == null) connectServerCommand = new RelayCommand(param => this.ConnectToServer(param));
-                return connectServerCommand;
-            }
+            System.Windows.Forms.Clipboard.SetText(ConnectionString);
         }
-        private void ConnectToServer(object param)
+
+        public void ReloadDatabase()
         {
+            throw new NotImplementedException();
+        }
+
+        public void ConnectToServer()
+        {
+            var w = new WindowManager();
+            var connectionDialogViewModel = IoC.Get<InitConnectionDialogViewModel>();
+            var dialogResult = w.ShowDialog(connectionDialogViewModel);
+            if (!dialogResult.HasValue || !dialogResult.Value)
+                return;
+            ConnectionString =
+                $"data source={connectionDialogViewModel.DataSource};" +
+                $"initial catalog={connectionDialogViewModel.Database};" +
+                $"persist security info=True;" +
+                $"user id={connectionDialogViewModel.Login};" +
+                $"password={connectionDialogViewModel.Password};" +
+                $"multipleactiveresultsets=True";
             var currentCursor = Mouse.OverrideCursor;
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
                 _dbInfo = model.GetDbInfo(ConnectionString);
-                PopulateTree(_dbInfo, (TreeViewWithCheckBox)param);
+                PopulateTree(_dbInfo);
                 IsConnectedToServer = true;
             }
 
@@ -106,38 +125,32 @@ namespace SPGenerator.UI.ViewModels
             }
         }
 
-        private RelayCommand generateSPCommand;
-        public ICommand GenerateSPCommand
-        {
-            get
-            {
-                if (generateSPCommand == null) generateSPCommand = new RelayCommand(param => this.GenerateSps());
-                return generateSPCommand;
-            }
-        }
-
-        private RelayCommand settingCommand;
+        private RelayCommand _settingCommand;
         public ICommand SettingCommand
         {
             get
             {
-                if (settingCommand == null) settingCommand = new RelayCommand(param => this.Settings());
-                return settingCommand;
+                if (_settingCommand == null) _settingCommand = new RelayCommand(param => this.Settings());
+                return _settingCommand;
             }
         }
         private void Settings()
         {
-            Views.Settings setting = new Views.Settings();
-            setting.Show();
+            Views.SettingsDialogView settingDialogView = new Views.SettingsDialogView();
+            settingDialogView.Show();
         }
 
-        private RelayCommand copyCommand;
+        private string _sqlScript;
+        private string _connectionString;
+        private bool _isConnectedToServer;
+
+        private RelayCommand _copyCommand;
         public ICommand CopyCommand
         {
             get
             {
-                if (copyCommand == null) copyCommand = new RelayCommand(param => this.Copy());
-                return copyCommand;
+                if (_copyCommand == null) _copyCommand = new RelayCommand(param => this.Copy());
+                return _copyCommand;
             }
         }
         private void Copy()
@@ -148,41 +161,11 @@ namespace SPGenerator.UI.ViewModels
             }
         }
 
-        private RelayCommand gotFocusConnectionStringCommand;
-        public ICommand GotFocusConnectionStringCommand
-        {
-            get
-            {
-                if (gotFocusConnectionStringCommand == null) gotFocusConnectionStringCommand = new RelayCommand(param => this.GotFocusConnectionString());
-                return gotFocusConnectionStringCommand;
-            }
-        }
-        private void GotFocusConnectionString()
-        {
-            if (ConnectionString.Trim() == conString)
-                ConnectionString = "";
-        }
-
-        private RelayCommand lostFocusConnectionStringCommand;
-        public ICommand LostFocusConnectionStringCommand
-        {
-            get
-            {
-                if (lostFocusConnectionStringCommand == null) lostFocusConnectionStringCommand = new RelayCommand(param => this.LostFocusConnectionString());
-                return lostFocusConnectionStringCommand;
-            }
-        }
-        private void LostFocusConnectionString()
-        {
-            if (ConnectionString.Trim() == "")
-                ConnectionString = conString;
-        }
-
         #endregion
 
         #region SP Generation
 
-        private void GenerateSps()
+        public void GenerateSP()
         {
             StringBuilder sb = new StringBuilder(1000);
             //model.RefreshSettings();
@@ -262,8 +245,10 @@ namespace SPGenerator.UI.ViewModels
         #endregion
 
         #region PopulateTree
-        private void PopulateTree(IEnumerable<DBTableInfo> sqlTableList, TreeViewWithCheckBox treeView1)
+        private void PopulateTree(IEnumerable<DBTableInfo> sqlTableList)
         {
+            var view = (MainWindowView) GetView();
+            var treeView1 = view.treeView1;
             TreeViewNode root = new TreeViewNode(Constants.rootTreeNodeText, null);
             foreach (var tbl in sqlTableList)
             {
