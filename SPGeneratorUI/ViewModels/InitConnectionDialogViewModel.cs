@@ -10,6 +10,10 @@ namespace SPGenerator.UI.ViewModels
 {
     class InitConnectionDialogViewModel: ViewAware
     {
+        public InitConnectionDialogViewModel()
+        {
+        }
+
         #region Props
 
         private string _dataSource;

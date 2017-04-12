@@ -28,6 +28,9 @@ namespace SPGenerator.Core
                 case Constants.selectOneTreeNodeText:
                     spGeneraror = new SelectOneSPGenerator();
                     break;
+                case Constants.selectByTreeNodeText:
+                    spGeneraror = new SelectBySPGenerator();
+                    break;
             }
             return spGeneraror;
         }

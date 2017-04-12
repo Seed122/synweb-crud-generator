@@ -8,15 +8,15 @@ namespace SPGenerator.Core
 {
     class DeleteSPGenerator:BaseSPGenerator
     {
-        protected override string GetSpName(string tableName)
+        protected override string GetSpName(string tableName, List<DBTableColumnInfo> whereConditionCols)
         {
             return tableName + "_Delete";
         }
 
-        protected override string GenerateStatement(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedFields, List<DBTableColumnInfo> whereConditionFields)
+        protected override string GenerateStatement(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedCols, List<DBTableColumnInfo> whereConditionCols)
         {
             return "\tDELETE FROM " + tableInfo.FullTableName + Environment.NewLine 
-                + GenerateWhereStatement(whereConditionFields);
+                + GenerateWhereStatement(whereConditionCols);
         }
 
     }

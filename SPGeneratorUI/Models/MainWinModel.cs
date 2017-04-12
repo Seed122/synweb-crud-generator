@@ -21,12 +21,16 @@ namespace SPGenerator.UI.Models
             return database.GetDataBaseTables().OrderBy(x => x.FullTableName).ToList();
         }
 
-        public StoredProcedure GenerateSp(DBTableInfo tableInfo, string nodeName, List<DBTableColumnInfo> selectedFields, List<DBTableColumnInfo> whereConditionFields)
+        public ICollection<StoredProcedure> GenerateSp(DBTableInfo tableInfo, string nodeName, List<DBTableColumnInfo> selectedFields, List<DBTableColumnInfo> whereConditionFields)
         {
             BaseSPGenerator spGenerator = SPFactory.GetSpGeneratorObject(nodeName);
-            StoredProcedure procedure = spGenerator.GenerateSp(tableInfo, selectedFields, whereConditionFields);
+            ICollection<StoredProcedure> procedures = spGenerator.GenerateSp(tableInfo, selectedFields, whereConditionFields);
+            foreach (var procedure in procedures)
+            {
             SaveProcedureToFile(procedure);
-            return procedure;
+
+            }
+            return procedures;
         }
         private IDatabase GetDataBaseObject(string connectionString)
         {

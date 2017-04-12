@@ -93,7 +93,18 @@ namespace SPGenerator.UI.ViewModels
 
         public void ReloadDatabase()
         {
-            throw new NotImplementedException();
+            var currentCursor = Mouse.OverrideCursor;
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                _dbInfo = model.GetDbInfo(ConnectionString);
+                PopulateTree(_dbInfo);
+                IsConnectedToServer = true;
+            }
+            finally
+            {
+                Mouse.OverrideCursor = currentCursor;
+            }
         }
 
         public void ConnectToServer()
@@ -110,19 +121,7 @@ namespace SPGenerator.UI.ViewModels
                 $"user id={connectionDialogViewModel.Login};" +
                 $"password={connectionDialogViewModel.Password};" +
                 $"multipleactiveresultsets=True";
-            var currentCursor = Mouse.OverrideCursor;
-            try
-            {
-                Mouse.OverrideCursor = Cursors.Wait;
-                _dbInfo = model.GetDbInfo(ConnectionString);
-                PopulateTree(_dbInfo);
-                IsConnectedToServer = true;
-            }
-
-            finally
-            {
-                Mouse.OverrideCursor = currentCursor;
-            }
+            ReloadDatabase();
         }
 
         private RelayCommand _settingCommand;
@@ -191,8 +190,11 @@ namespace SPGenerator.UI.ViewModels
                 {
                     try
                     {
-                        var sp = model.GenerateSp((DBTableInfo)tblNode.Tag, childNode.Name, selectedFields, whereClauseSelectedFields);
-                        sb.AppendLine(sp.Script);
+                        ICollection<StoredProcedure> storedProcedures = model.GenerateSp((DBTableInfo)tblNode.Tag, childNode.Name, selectedFields, whereClauseSelectedFields);
+                        foreach (var storedProcedure in storedProcedures)
+                        {
+                            sb.AppendLine(storedProcedure.Script);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -319,6 +321,25 @@ namespace SPGenerator.UI.ViewModels
                     selectOneSp);
                 selectOneSp.Children.Add(whereSelectOneCondition);
                 AddColumnNodes(whereSelectOneCondition, selectOneWhereCols, true);
+            }
+            
+            var selectByColumns = new DBTableColumnInfo[sqlTableInfo.Columns.Count];
+            var selectByWhereCols = sqlTableInfo.Columns.Where(x => x.IsForeignKey && !x.IsPrimaryKey).ToArray();
+            sqlTableInfo.Columns.CopyTo(selectByColumns, 0);
+            Array.ForEach(selectByColumns, x =>
+            {
+                x.Exclude = false;
+            });
+            if (selectByColumns.Any() &&
+                selectByWhereCols.Any())
+            {
+                TreeViewNode selectBySp = new TreeViewNode(Constants.selectByTreeNodeText, tblNode);
+                AddColumnNodes(selectBySp, selectByColumns, true);
+                tblNode.Children.Add(selectBySp);
+                TreeViewNode whereSelectByCondition = new TreeViewNode(Constants.whereConditionTreeNodeText,
+                    selectBySp);
+                selectBySp.Children.Add(whereSelectByCondition);
+                AddColumnNodes(whereSelectByCondition, selectByWhereCols, true);
             }
 
             return tblNode;

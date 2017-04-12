@@ -10,16 +10,16 @@ namespace SPGenerator.Core
     class InsertSPGenerator : BaseSPGenerator
     {
 
-        protected override string GetSpName(string tableName)
+        protected override string GetSpName(string tableName, List<DBTableColumnInfo> whereConditionCols)
         {
             return tableName + "_Insert";
         }
             
-        protected override string GenerateStatement(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedFields, List<DBTableColumnInfo> whereConditionFields)
+        protected override string GenerateStatement(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedCols, List<DBTableColumnInfo> whereConditionCols)
         {
             List<string> values = new List<string>();
             List<string> fields = new List<string>();
-            foreach (DBTableColumnInfo colInf in selectedFields.Where(x => !x.Exclude))
+            foreach (DBTableColumnInfo colInf in selectedCols.Where(x => !x.Exclude))
             {
                 values.Add(PrefixInputParameter + colInf.ColumnName);
                 fields.Add(Wrap(colInf.ColumnName));

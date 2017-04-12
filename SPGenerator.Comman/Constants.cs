@@ -13,7 +13,8 @@ namespace SPGenerator.Common
         public const string deleteTreeNodeText = "Delete";
         public const string selectTreeNodeText = "Select";
         public const string selectOneTreeNodeText = "SelectOne";
-        public const string whereConditionTreeNodeText = "Where Fields:";
+        public const string selectByTreeNodeText = "SelectBy";
+        public const string whereConditionTreeNodeText = "'Where' Fields";
         public const string rootTreeNodeText = "Tables";
         public const string settingTempFileName = "SPGenerator_Settings.txt";
     }

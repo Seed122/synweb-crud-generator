@@ -6,11 +6,14 @@ using SPGenerator.DataModel;
 
 namespace SPGenerator.Core
 {
-    class SelectSPGenerator: BaseSPGenerator
+    class SelectBySPGenerator : BaseSPGenerator
     {
         protected override string GetSpName(string tableName, List<DBTableColumnInfo> whereConditionCols)
         {
-            return tableName + "_Select";
+            if (whereConditionCols.Count > 1)
+                throw new NotImplementedException();
+            var whereCol = whereConditionCols.First();
+            return $"{tableName}_SelectBy{whereCol.ColumnName}";
         }
 
         protected override string GenerateStatement(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedCols, List<DBTableColumnInfo> whereConditionCols)
@@ -30,8 +33,9 @@ namespace SPGenerator.Core
                 selectFieldsStr = string.Join(", ", fields);
             }
 
-            return
-                $"\tSELECT {selectFieldsStr} FROM {tableInfo.FullTableName}";
+            var sb = new StringBuilder();
+            sb.AppendLine($"\tSELECT {selectFieldsStr} FROM {tableInfo.FullTableName}{Environment.NewLine}{GenerateWhereStatement(whereConditionCols)}");
+            return sb.ToString();
         }
 
         protected override string GenerateInputParameters(List<DBTableColumnInfo> fields)

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:views="clr-namespace:TreeViewControl.Views;assembly=TreeViewControl"
-        Title="SynWeb CRUDGen" Height="500" Width="950" FontSize="12"  WindowStartupLocation="CenterScreen">
+        Title="SynWeb CRUDGen" Height="700" Width="1250" FontSize="12"  WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" TargetType="Button">
             <Setter Property="Control.FontWeight" Value="Bold" />
@@ -41,8 +41,8 @@
 
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Grid.Column="1" Grid.Row="0"  Name="ReloadDatabase"  Margin="10,0">Reload</Button>
-            <!--<Button Grid.Column="1" Grid.Row="0"  Command="{Binding ConnectServerCommand}" CommandParameter="{Binding ElementName=treeView1}" >Connect To Server</Button>-->
+                <Button Grid.Column="1" Grid.Row="0"  Name="ReloadDatabase"  Margin="10,0" 
+                        IsEnabled="{Binding IsConnectionStringInitialized, Converter={StaticResource BooleanToVisibilityConverter}}">Reload</Button>
                 <Button Grid.Column="1" Grid.Row="0"  Name="ConnectToServer">Connect To Server</Button>
 
             </StackPanel>
@@ -62,7 +62,7 @@
             <TextBox Name="txtOutPut" Grid.Row="0" Grid.Column="1"  Grid.RowSpan="2"
                      Height="Auto" Width="Auto" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Text="{Binding SqlScript}" ScrollViewer.CanContentScroll="True" BorderThickness="0" Grid.ColumnSpan="2"   />
 
-            <GridSplitter Grid.Column="1" Grid.RowSpan="2"
+            <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
               HorizontalAlignment="Left" 
               VerticalAlignment="Stretch"
               Background="LightBlue" 

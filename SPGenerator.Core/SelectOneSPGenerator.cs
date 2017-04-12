@@ -8,22 +8,22 @@ namespace SPGenerator.Core
 {
     class SelectOneSPGenerator:BaseSPGenerator
     {
-        protected override string GetSpName(string tableName)
+        protected override string GetSpName(string tableName, List<DBTableColumnInfo> whereConditionCols)
         {
             return tableName + "_SelectOne";
         }
 
-        protected override string GenerateStatement(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedFields, List<DBTableColumnInfo> whereConditionFields)
+        protected override string GenerateStatement(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedCols, List<DBTableColumnInfo> whereConditionCols)
         {
             string selectFieldsStr;
-            if (selectedFields.Count == tableInfo.Columns.Count)
+            if (selectedCols.Count == tableInfo.Columns.Count)
             {
                 selectFieldsStr = "*";
             }
             else
             {
                 List<string> fields = new List<string>();
-                foreach (DBTableColumnInfo colInf in selectedFields.Where(x => !x.Exclude))
+                foreach (DBTableColumnInfo colInf in selectedCols.Where(x => !x.Exclude))
                 {
                     fields.Add(Wrap(colInf.ColumnName));
                 }
@@ -31,7 +31,7 @@ namespace SPGenerator.Core
             }
 
             return
-                $"\tSELECT {selectFieldsStr} FROM {tableInfo.FullTableName}{Environment.NewLine}{GenerateWhereStatement(whereConditionFields)}";
+                $"\tSELECT {selectFieldsStr} FROM {tableInfo.FullTableName}{Environment.NewLine}{GenerateWhereStatement(whereConditionCols)}";
         }
 
         protected override string GenerateInputParameters(List<DBTableColumnInfo> fields)

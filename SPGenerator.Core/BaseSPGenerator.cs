@@ -11,9 +11,9 @@ namespace SPGenerator.Core
     public abstract class BaseSPGenerator
     {
         #region Abstract Method
-        protected abstract string GetSpName(string tableName);
+        protected abstract string GetSpName(string tableName, List<DBTableColumnInfo> whereConditionFields);
 
-        protected abstract string GenerateStatement(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedFields, List<DBTableColumnInfo> whereConditionFields);
+        protected abstract string GenerateStatement(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedCols, List<DBTableColumnInfo> whereConditionCols);
         #endregion
 
         #region Static Members
@@ -33,15 +33,35 @@ namespace SPGenerator.Core
 
         #region GenerateSP
 
-        public StoredProcedure GenerateSp(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedFields,
-            List<DBTableColumnInfo> whereConditionFields)
+        public ICollection<StoredProcedure> GenerateSp(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedCols,
+            List<DBTableColumnInfo> whereConditionCols, bool oneSpPerCondition = false)
         {
-            var name = GetSpName(tableInfo.TableName);
+            if (oneSpPerCondition)
+            {
+                var resCount = whereConditionCols.Count;
+                var res = new StoredProcedure[resCount];
+                for (int i = 0; i < whereConditionCols.Count; i++)
+                {
+                    res[i] = GenerateSingleSP(tableInfo, selectedCols,
+                        new List<DBTableColumnInfo>() {whereConditionCols.ElementAt(i)});
+                }
+                return res;
+            }
+            else
+            {
+                return new List<StoredProcedure>() {GenerateSingleSP(tableInfo, selectedCols, whereConditionCols)};
+            }
+        }
+
+        public StoredProcedure GenerateSingleSP(DBTableInfo tableInfo, List<DBTableColumnInfo> selectedCols,
+            List<DBTableColumnInfo> whereConditionCols)
+        {
+            var name = GetSpName(tableInfo.TableName, whereConditionCols);
             var statementBuilder = new StringBuilder();
-            statementBuilder.AppendLine("CREATE PROCEDURE " + string.Format("[{0}].[{1}]", tableInfo.Schema, name));
+            statementBuilder.AppendLine($"CREATE PROCEDURE [{tableInfo.Schema}].[{name}]");
             //GenerateErrorNumberOutParameter(statementBuilder);
-            var inputs = GenerateInputParameters(selectedFields);
-            var wheres = GenerateWhereParameters(whereConditionFields);
+            var inputs = GenerateInputParameters(selectedCols);
+            var wheres = GenerateWhereParameters(whereConditionCols);
             if (!string.IsNullOrWhiteSpace(inputs))
             {
                 statementBuilder.Append(inputs);
@@ -51,14 +71,14 @@ namespace SPGenerator.Core
                 }
                 statementBuilder.AppendLine();
             }
-            
+
             if (!string.IsNullOrWhiteSpace(wheres))
             {
                 statementBuilder.AppendLine(wheres);
             }
             statementBuilder.AppendLine("AS");
             //GenerateStartTryBlock(statementBuilder);
-            statementBuilder.AppendLine(GenerateStatement(tableInfo, selectedFields, whereConditionFields));
+            statementBuilder.AppendLine(GenerateStatement(tableInfo, selectedCols, whereConditionCols));
             //GenerateEndTryBlock(statementBuilder);
             //GenerateCatchBlock(statementBuilder);
             var res = new StoredProcedure
@@ -68,6 +88,7 @@ namespace SPGenerator.Core
                 Script = statementBuilder.ToString()
             };
             return res;
+
         }
 
         protected virtual string GenerateDropScript(string spName)
